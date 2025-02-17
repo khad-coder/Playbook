@@ -1,4 +1,3 @@
-# Playbook
 ---
 - name: Basic System Setup
   hosts: web
@@ -10,7 +9,6 @@
         name: apache2
         state: present
 
-=====
 
 
 
