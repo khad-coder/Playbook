@@ -1,0 +1,43 @@
+---
+- name: Installer et configurer Fail2ban
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Mettre à jour le cache APT
+      apt:
+        update_cache: yes
+
+    - name: Installer Fail2ban
+      apt:
+        name: fail2ban
+        state: present
+
+    - name: Copier le fichier de configuration kad.local
+      copy:
+        dest: /etc/fail2ban/kad.local
+        content: |
+          [DEFAULT]
+          ignoreip = 127.0.0.1/8
+          bantime  = 600
+          findtime  = 600
+          maxretry = 5
+
+          [sshd]
+          enabled = true
+
+    - name: Redémarrer Fail2ban
+      service:
+        name: fail2ban
+        state: restarted
+        enabled: yes
+
+    - name: Vérifier le statut de Fail2ban
+      command: fail2ban-client status
+      register: fail2ban_status
+
+    - name: Afficher le statut de Fail2ban
+      debug:
+        msg: "{{ fail2ban_status.stdout }}"
+
+
